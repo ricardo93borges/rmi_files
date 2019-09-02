@@ -21,4 +21,3 @@ Academic project to exercise programming with sockets and Java RMI
     - [ ] Request resources list
     - [ ] Request a resource location to server
     - [ ] Request a resource to another client
-- 

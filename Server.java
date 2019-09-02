@@ -17,8 +17,14 @@ public class Server {
             System.out.println("java RMI registry created at " + this.host);
         } catch (RemoteException e) {
             System.out.println("java RMI registry already exists.");
+        }
+
+        try {
+            Naming.rebind("Resource", new Resource());
+            System.out.println("Server is ready.");
         } catch (Exception e) {
             System.out.println("Server failed: " + e.getMessage());
         }
+
     }
 }
