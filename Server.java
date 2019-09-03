@@ -20,7 +20,7 @@ public class Server {
         }
 
         try {
-            Naming.rebind("Resource", new Resource());
+            Naming.rebind("ResourceManager", new ResourceManager());
             System.out.println("Server is ready.");
         } catch (Exception e) {
             System.out.println("Server failed: " + e.getMessage());

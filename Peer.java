@@ -1,15 +1,15 @@
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Peer {
+public class Peer implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String ip;
-    private ArrayList<File> files;
+    private ArrayList<Resource> resources;
 
-    public Peer(String ip, ArrayList<File> files) {
+    public Peer(String ip, ArrayList<Resource> resources) {
         this.ip = ip;
-        this.files = files;
+        this.resources = resources;
     }
 
     public String getIp() {
@@ -20,15 +20,15 @@ public class Peer {
         this.ip = ip;
     }
 
-    public ArrayList<File> getFiles() {
-        return this.files;
+    public ArrayList<Resource> getResources() {
+        return this.resources;
     }
 
-    public void setFiles(ArrayList<File> files) {
-        this.files = files;
+    public void setResources(ArrayList<Resource> resources) {
+        this.resources = resources;
     }
 
-    public void addFile(File file) {
-        this.files.add(file);
+    public void addResource(Resource resource) {
+        this.resources.add(resource);
     }
 }

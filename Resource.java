@@ -2,17 +2,30 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-public class Resource extends UnicastRemoteObject implements ResourceInterface {
-    private static final long serialVersionUID = 1L;
+public class Resource {
 
-    public ArrayList<Peer> resources;
+    private String name;
+    private String hash;
 
-    public Resource() throws RemoteException {
-        this.resources = new ArrayList<String>();
+    public Resource(String name, String hash) {
+        this.name = name;
+        this.hash = hash;
     }
 
-    public void add(Peer peer) {
-        this.resources.add(peer);
-        System.out.println(this.resources.toString());
+    public String getName() {
+        return this.name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHash() {
+        return this.hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
 }
