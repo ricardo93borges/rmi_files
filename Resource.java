@@ -1,23 +1,17 @@
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-public class Resource {
-
-    private String name;
+public class Resource implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     private String hash;
+    private String ip;
 
-    public Resource(String name, String hash) {
-        this.name = name;
+    public Resource(String hash, String ip) {        
         this.hash = hash;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.ip = ip;
     }
 
     public String getHash() {
@@ -28,4 +22,11 @@ public class Resource {
         this.hash = hash;
     }
 
+    public String getIp() {
+        return this.ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 }
