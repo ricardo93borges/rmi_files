@@ -13,12 +13,28 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
     }
 
     public void add(ArrayList<Resource> resources) {
-        for(Resource resource: resources){
+        for (Resource resource : resources) {
             this.resources.put(resource.getHash(), resource.getIp());
         }
     }
 
-    public HashMap<String, String> getResources() {
-        return this.resources;
+    public ArrayList<String> getResources() {
+        ArrayList<String> resources = new ArrayList<String>();
+        for (String key : this.resources.keySet()) {
+            resources.add(key);
+        }
+        return resources;
+    }
+
+    public String getResourceLocation(String hash) {
+        return this.resources.get(hash);
+    }
+
+    public void removeResources(String ip) {
+        for (String key : this.resources.keySet()) {
+            if (this.resources.get(key).equals(ip)) {
+                this.resources.remove(key);
+            }
+        }
     }
 }

@@ -5,5 +5,8 @@ import java.util.HashMap;
 
 public interface ResourceManagerInterface extends Remote {
     public void add(ArrayList<Resource> resources) throws RemoteException;
-    public HashMap<String, String> getResources() throws RemoteException;
+
+    public ArrayList<String> getResources() throws RemoteException;
+
+    public String getResourceLocation(String hash) throws RemoteException;
 }
