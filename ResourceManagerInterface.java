@@ -7,5 +7,5 @@ public interface ResourceManagerInterface extends Remote {
 
     public ArrayList<String> getResources() throws RemoteException;
 
-    public String getResourceLocation(String hash) throws RemoteException;
+    public Resource getResourceLocation(String hash) throws RemoteException;
 }

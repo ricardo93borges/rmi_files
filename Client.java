@@ -11,9 +11,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.Socket;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
 
 public class Client {
 
@@ -41,18 +46,6 @@ public class Client {
         try {
             this.resources = this.getResources(dir);
             this.resourceManager.add(this.resources);
-            /**
-                TODO (main thread)
-                    while true 
-                        request from server files list 
-                        request from server random file location
-                        request (via socket) from a client random file and write them                     
-            */
-            /**
-                TODO (another thread)
-                    accepts requests from clients for random files
-                    handle this requests in another threads
-            */
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -60,6 +53,43 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            Runnable connectionHandler = new ConnectionHandler(this.dir);
+            new Thread(connectionHandler).start();
+
+            while(true) {
+                //Get and select a resource
+                ArrayList<String> resources = this.requestResources();
+                String randomResource = this.selectRandomResource(resources);
+                Resource resourceLocation = this.requestResourceLocation(randomResource);
+
+                //Open connection
+                Socket socket = new Socket(resourceLocation.getIp(), 3322);
+
+                //Send resource name
+                OutputStream outputStream = socket.getOutputStream();
+                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+                dataOutputStream.writeUTF(resourceLocation.getName());
+                dataOutputStream.flush();
+                dataOutputStream.close();
+
+                //Receive resource
+                Scanner input = new Scanner(socket.getInputStream());
+                while(input.hasNextLine()){
+                    System.out.println(input.nextLine());
+                }
+
+                input.close();
+                socket.close();
+
+                TimeUnit.SECONDS.sleep(5);
+            }
+
+        } catch (Exception e) {
+            System.out.println("AdditionClient failed: ");
+            e.printStackTrace();
+        }       
     }
 
     public ArrayList<Resource> getResources(String dir) throws IOException, NoSuchAlgorithmException {
@@ -73,7 +103,7 @@ public class Client {
                 Charset charset = Charset.forName("ISO-8859-1");
                 String content = Files.readAllLines(path, charset).stream().collect(Collectors.joining(""));
                 String hash = new String(this.hash(content), "UTF-8");
-                resources.add(new Resource(hash, this.ip));
+                resources.add(new Resource(hash, this.ip, file.getName()));
             }
         }
 
@@ -84,7 +114,7 @@ public class Client {
         return this.resourceManager.getResources();
     }
 
-    public String requestResourceLocation(String hash) throws RemoteException {
+    public Resource requestResourceLocation(String hash) throws RemoteException {
         return this.resourceManager.getResourceLocation(hash);
     }
 

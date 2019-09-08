@@ -6,15 +6,15 @@ import java.util.HashMap;
 public class ResourceManager extends UnicastRemoteObject implements ResourceManagerInterface {
     private static final long serialVersionUID = 1L;
 
-    private HashMap<String, String> resources;
+    private HashMap<String, Resource> resources;
 
     public ResourceManager() throws RemoteException {
-        this.resources = new HashMap<String, String>();
+        this.resources = new HashMap<String, Resource>();
     }
 
     public void add(ArrayList<Resource> resources) {
         for (Resource resource : resources) {
-            this.resources.put(resource.getHash(), resource.getIp());
+            this.resources.put(resource.getHash(), resource);
         }
     }
 
@@ -26,7 +26,7 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
         return resources;
     }
 
-    public String getResourceLocation(String hash) {
+    public Resource getResourceLocation(String hash) {
         return this.resources.get(hash);
     }
 

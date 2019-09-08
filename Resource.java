@@ -5,10 +5,12 @@ public class Resource implements Serializable {
 
     private String hash;
     private String ip;
+    private String name;
 
-    public Resource(String hash, String ip) {
+    public Resource(String hash, String ip, String name) {
         this.hash = hash;
         this.ip = ip;
+        this.name = name;
     }
 
     public String getHash() {
@@ -25,5 +27,13 @@ public class Resource implements Serializable {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+    
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
