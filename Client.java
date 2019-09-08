@@ -10,8 +10,6 @@ import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.net.InetAddress;
@@ -19,7 +17,6 @@ import java.net.UnknownHostException;
 
 public class Client {
 
-    private String host;
     private String ip;
     private String dir;
     private String connectLocation;
@@ -27,7 +24,6 @@ public class Client {
     private ResourceManagerInterface resourceManager;
 
     public Client(String host, String dir) {
-        this.host = host;
         this.dir = dir;
         this.connectLocation = "//" + host + "/ResourceManager";
         this.setIp();
@@ -45,6 +41,18 @@ public class Client {
         try {
             this.resources = this.getResources(dir);
             this.resourceManager.add(this.resources);
+            /**
+                TODO (main thread)
+                    while true 
+                        request from server files list 
+                        request from server random file location
+                        request (via socket) from a client random file and write them                     
+            */
+            /**
+                TODO (another thread)
+                    accepts requests from clients for random files
+                    handle this requests in another threads
+            */
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {

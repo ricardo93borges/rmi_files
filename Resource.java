@@ -1,15 +1,12 @@
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 
-public class Resource implements Serializable{
+public class Resource implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private String hash;
     private String ip;
 
-    public Resource(String hash, String ip) {        
+    public Resource(String hash, String ip) {
         this.hash = hash;
         this.ip = ip;
     }

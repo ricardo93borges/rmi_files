@@ -3,7 +3,7 @@ import java.rmi.RemoteException;
 public class Main {
     public static void main(String[] args) throws RemoteException {
         if (args.length < 2) {
-            System.out.println("Insuficient arguments");
+            System.out.println("Insufficient arguments");
             System.exit(1);
         }
 
