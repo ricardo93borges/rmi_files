@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,9 +15,9 @@ public class ConnectionHandler implements Runnable {
     public void run() {
         try {
             System.out.println("ConnectionHandler thread : " + Thread.currentThread().getName());
-            
-            ServerSocket server = new ServerSocket(3322);                       
-            System.out.println("Server started on port 3322");
+                        
+            ServerSocket server = new ServerSocket(3322);
+            System.out.println("Server started on port "+server.getInetAddress()+":"+server.getLocalPort());
              
             Socket client = server.accept();
 

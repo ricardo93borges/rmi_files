@@ -1,8 +1,13 @@
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.Charset;
@@ -26,8 +31,10 @@ public class RequestHandler implements Runnable {
             System.out.println("client connected: "+this.client.getInetAddress().getHostAddress());
 
             //Get resource name
-            Scanner input = new Scanner(this.client.getInputStream());
-            String resourceName = input.nextLine();            
+            InputStream input = this.client.getInputStream();
+            InputStreamReader isr = new InputStreamReader(input);
+            BufferedReader br = new BufferedReader(isr);
+            String resourceName = br.readLine();
 
             System.out.println("resourceName: " + resourceName);
             
@@ -36,13 +43,15 @@ public class RequestHandler implements Runnable {
             Charset charset = Charset.forName("ISO-8859-1");
             String content = Files.readAllLines(path, charset).stream().collect(Collectors.joining(""));
 
+            OutputStream os = this.client.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            BufferedWriter bw = new BufferedWriter(osw);
+
+            String str = content + "\n";
+            bw.write(str);
+            bw.flush();
+
             //Send resource content
-            OutputStream outputStream = this.client.getOutputStream();
-            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-            dataOutputStream.writeUTF(content);
-            dataOutputStream.flush();
-            
-            dataOutputStream.close();
             input.close();
             this.client.close();
 

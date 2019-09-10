@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -17,8 +19,11 @@ import java.util.stream.Collectors;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 public class Client {
 
@@ -58,33 +63,48 @@ public class Client {
             Runnable connectionHandler = new ConnectionHandler(this.dir);
             new Thread(connectionHandler).start();
 
-            while(true) {
+            //while(true) {
                 //Get and select a resource
                 ArrayList<String> resources = this.requestResources();
-                String randomResource = this.selectRandomResource(resources);
-                Resource resourceLocation = this.requestResourceLocation(randomResource);
+                if(resources.size() > 0) {
+                    String randomResource = this.selectRandomResource(resources);
+                    Resource resourceLocation = this.requestResourceLocation(randomResource);
+                    System.out.println("> resourceLocation" + resourceLocation.getIp() + ", " + resourceLocation.getName());
+                
+                    //Open connection
+                    String ip = resourceLocation.getIp();
+                    if(ip.equals("127.0.1.1")){
+                        ip = "172.16.14.62";
+                    }
+                    InetAddress addr = InetAddress.getByName(ip);
+                    System.out.println("> Connecting to " + addr.getHostAddress());
+                    Socket socket = new Socket(addr, 3322);
 
-                //Open connection
-                Socket socket = new Socket(resourceLocation.getIp(), 3322);
+                    //Send resource name
+                    System.out.println("> Sending name: "+ resourceLocation.getName());
 
-                //Send resource name
-                OutputStream outputStream = socket.getOutputStream();
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-                dataOutputStream.writeUTF(resourceLocation.getName());
-                dataOutputStream.flush();
-                dataOutputStream.close();
+                    OutputStream os = socket.getOutputStream();
+                    OutputStreamWriter osw = new OutputStreamWriter(os);
+                    BufferedWriter bw = new BufferedWriter(osw);
+        
+                    String str = resourceLocation.getName() + "\n";
+                    bw.write(str);
+                    bw.flush();
 
-                //Receive resource
-                Scanner input = new Scanner(socket.getInputStream());
-                while(input.hasNextLine()){
-                    System.out.println(input.nextLine());
+                    //Receive resource
+                    InputStream input = socket.getInputStream();
+                    InputStreamReader isr = new InputStreamReader(input);
+                    BufferedReader br = new BufferedReader(isr);
+                    String content = br.readLine();
+
+                    System.out.println("> Content received" + content);
+
+                    input.close();
+                    socket.close();
+
+                    //TimeUnit.SECONDS.sleep(5);
                 }
-
-                input.close();
-                socket.close();
-
-                TimeUnit.SECONDS.sleep(5);
-            }
+            //}
 
         } catch (Exception e) {
             System.out.println("AdditionClient failed: ");
@@ -111,7 +131,7 @@ public class Client {
     }
 
     public ArrayList<String> requestResources() throws RemoteException {
-        return this.resourceManager.getResources();
+        return this.resourceManager.getResources(this.ip);
     }
 
     public Resource requestResourceLocation(String hash) throws RemoteException {
