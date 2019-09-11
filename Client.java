@@ -63,7 +63,7 @@ public class Client {
             Runnable connectionHandler = new ConnectionHandler(this.dir);
             new Thread(connectionHandler).start();
 
-            //while(true) {
+            while(true) {
                 //Get and select a resource
                 ArrayList<String> resources = this.requestResources();
                 if(resources.size() > 0) {
@@ -101,10 +101,9 @@ public class Client {
 
                     input.close();
                     socket.close();
-
-                    //TimeUnit.SECONDS.sleep(5);
                 }
-            //}
+                TimeUnit.SECONDS.sleep(15);
+            }
 
         } catch (Exception e) {
             System.out.println("AdditionClient failed: ");

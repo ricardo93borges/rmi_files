@@ -1,6 +1,7 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,9 +9,12 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
     private static final long serialVersionUID = 1L;
 
     private HashMap<String, Resource> resources;
+    private HashMap<String, Long> requests;
+
 
     public ResourceManager() throws RemoteException {        
         this.resources = new HashMap<String, Resource>();
+        this.requests = new HashMap<String, Long>();
     }
 
     public void add(ArrayList<Resource> resources) {
@@ -21,13 +25,19 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
         this.printResources();
     }
 
-    public ArrayList<String> getResources(String excludeIp) {
+    public ArrayList<String> getResources(String excludeIp) {        
+        this.requests.put(excludeIp, new Date().getTime());
+
         ArrayList<String> resources = new ArrayList<String>();
         for (String key : this.resources.keySet()) {
             if(!this.resources.get(key).getIp().equals(excludeIp)){
                 resources.add(key);
             }
         }
+
+        if(this.requests.size() > 0)
+            this.checkRequests(excludeIp);
+        
         return resources;
     }
 
@@ -48,5 +58,23 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
 		for (Map.Entry<String, Resource> entry : this.resources.entrySet()) {
 		    System.out.println(entry.getValue().getIp() + ", " + entry.getValue().getName() );
         }
+    }
+
+    public void checkRequests(String ip) {
+        Date now = new Date();
+        ArrayList<String> keysToRemove = new ArrayList<>();
+
+        for (Map.Entry<String, Resource> entry : this.resources.entrySet()) {
+            long lastDate = this.requests.get(entry.getValue().getIp());
+            long seconds = (now.getTime() - lastDate)/1000;
+            
+            if(seconds > 10) 
+                keysToRemove.add(entry.getKey());                
+        }
+
+        for(String key: keysToRemove)
+            this.resources.remove(key);
+
+        this.printResources();
     }
 }

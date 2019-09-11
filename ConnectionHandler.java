@@ -19,13 +19,13 @@ public class ConnectionHandler implements Runnable {
             ServerSocket server = new ServerSocket(3322);
             System.out.println("Server started on port "+server.getInetAddress()+":"+server.getLocalPort());
              
-            Socket client = server.accept();
+            while(true) {
+                Socket client = server.accept();
 
-            RequestHandler requestHandler = new RequestHandler(client, dir);
-            new Thread(requestHandler).start();
+                RequestHandler requestHandler = new RequestHandler(client, dir);
+                new Thread(requestHandler).start();
+            }
             
-            server.close();
-             
         } catch (IOException e) {
             e.printStackTrace();
         }

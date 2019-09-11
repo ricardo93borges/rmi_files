@@ -15,9 +15,9 @@ Academic project to exercise programming with sockets and Java RMI
 - [ ] Client class
   - [x] Receive param to indicate files dir
   - [ ] Read/Write files
-  - [ ] Send/receive files
+  - [x] Send/receive files
   - [x] Send resources list on register
-  - [ ] Every 5 seconds:
-    - [ ] Request resources list
-    - [ ] Request a resource location to server
-    - [ ] Request a resource to another client
+  - [x] Every 5 seconds:
+    - [x] Request resources list
+    - [x] Request a resource location to server
+    - [x] Request a resource to another client
