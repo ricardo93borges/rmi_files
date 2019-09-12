@@ -153,9 +153,9 @@ public class Client {
 
     public Socket connectToPeer(String ip) {
         try {
-            if(ip.equals("127.0.1.1")){
+            /* if(ip.equals("127.0.1.1")){
                 ip = "172.16.14.62";
-            }
+            } */
 
             InetAddress addr = InetAddress.getByName(ip);            
             return new Socket(addr, 3322);
