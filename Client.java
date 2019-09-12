@@ -97,7 +97,9 @@ public class Client {
                     BufferedReader br = new BufferedReader(isr);
                     String content = br.readLine();
 
-                    System.out.println("> Content received" + content);
+                    //Write file
+                    System.out.println("> File received");
+                    this.writeFile(resourceLocation.getName(), content);
 
                     input.close();
                     socket.close();
@@ -154,6 +156,14 @@ public class Client {
             InetAddress ip = InetAddress.getLocalHost();
             this.ip = ip.getHostAddress();
         } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeFile(String name, String content) {
+        try {
+            Files.write(Paths.get(this.dir + "/" + name), content.getBytes());
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
