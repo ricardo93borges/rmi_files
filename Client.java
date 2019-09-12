@@ -31,10 +31,10 @@ public class Client {
     private ArrayList<Resource> resources;
     private ResourceManagerInterface resourceManager;
 
-    public Client(String host, String dir) {
+    public Client(String host, String ip, String dir) {
         this.dir = dir;
         this.connectLocation = "//" + host + "/ResourceManager";
-        this.setIp();
+        this.ip = ip;
     }
 
     public void run() {
@@ -72,19 +72,21 @@ public class Client {
                     System.out.println("> Connecting to peer: " + ip);
                     Socket socket = this.connectToPeer(ip);
 
-                    //Send resource name
-                    System.out.println("> Sending name: "+ resource.getName());
-                    this.sendFilenameToPeer(socket, resource.getName());
+                    if(socket != null) {                
+                        //Send resource name
+                        System.out.println("> Sending name: "+ resource.getName());
+                        this.sendFilenameToPeer(socket, resource.getName());
 
-                    //Receive resource
-                    System.out.println("> Receiving content ");
-                    String content = this.receiveContent(socket);
+                        //Receive resource
+                        System.out.println("> Receiving content ");
+                        String content = this.receiveContent(socket);
 
-                    //Write file
-                    System.out.println("> File received");
-                    this.writeFile(resource.getName(), content);
+                        //Write file
+                        System.out.println("> File received");
+                        this.writeFile(resource.getName(), content);
 
-                    socket.close();
+                        socket.close();
+                    }
                 }
                 System.out.println(" ----------------- ");
                 TimeUnit.SECONDS.sleep(5);
@@ -153,15 +155,10 @@ public class Client {
 
     public Socket connectToPeer(String ip) {
         try {
-            /* if(ip.equals("127.0.1.1")){
-                ip = "172.16.14.62";
-            } */
-
             InetAddress addr = InetAddress.getByName(ip);            
             return new Socket(addr, 3322);
-            
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("> Failed to connect to peer: "+ip);
             return null;
         }        
     }

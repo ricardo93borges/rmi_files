@@ -59,7 +59,7 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
     public void printResources() {
         System.out.println("> Resources list:");
 		for (Map.Entry<String, Resource> entry : this.resources.entrySet()) {
-		    System.out.println("-" + entry.getValue().getIp() + " | " + entry.getValue().getName() );
+		    System.out.println("- " + entry.getValue().getIp() + " | " + entry.getValue().getName() );
         }
     }
 

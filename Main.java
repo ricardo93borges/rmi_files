@@ -16,8 +16,9 @@ public class Main {
                 Server server = new Server(host);
                 server.run();
             } else if (type.equals("client")) {
-                String dir = args[2];
-                Client client = new Client(host, dir);
+                String ip = args[2];
+                String dir = args[3];
+                Client client = new Client(host, ip, dir);
                 client.run();
             } else {
                 System.out.println("Type unknown");
