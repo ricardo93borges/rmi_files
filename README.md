@@ -12,9 +12,9 @@ Academic project to exercise programming with sockets and Java RMI
   - [x] Send resources list to clients
   - [x] Send resources location to a client
   - [x] Remove client from list if did not receive a request after 10 seconds
-- [ ] Client class
+- [x] Client class
   - [x] Receive param to indicate files dir
-  - [ ] Read/Write files
+  - [x] Read/Write files
   - [x] Send/receive files
   - [x] Send resources list on register
   - [x] Every 5 seconds:

@@ -2,10 +2,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
@@ -27,8 +25,7 @@ public class RequestHandler implements Runnable {
     @Override
     public void run() {
         try{
-            System.out.println("RequestHandler thread : " + Thread.currentThread().getName());
-            System.out.println("client connected: "+this.client.getInetAddress().getHostAddress());
+            System.out.println("> [ServerSocket] Client connected: "+this.client.getInetAddress().getHostAddress());
 
             //Get resource name
             InputStream input = this.client.getInputStream();
@@ -36,7 +33,7 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(isr);
             String resourceName = br.readLine();
 
-            System.out.println("resourceName: " + resourceName);
+            System.out.println("> [ServerSocket] Sending resource: " + resourceName);
             
             //Get resource content
             Path path = Paths.get(this.dir + "/" + resourceName);

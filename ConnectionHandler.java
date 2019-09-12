@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,15 +12,12 @@ public class ConnectionHandler implements Runnable {
 
     @Override
     public void run() {
-        try {
-            System.out.println("ConnectionHandler thread : " + Thread.currentThread().getName());
-                        
+        try {                        
             ServerSocket server = new ServerSocket(3322);
-            System.out.println("Server started on port "+server.getInetAddress()+":"+server.getLocalPort());
+            System.out.println("> [ServerSocket] Server started on "+server.getInetAddress()+":"+server.getLocalPort());
              
             while(true) {
                 Socket client = server.accept();
-
                 RequestHandler requestHandler = new RequestHandler(client, dir);
                 new Thread(requestHandler).start();
             }

@@ -13,7 +13,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.net.InetAddress;
@@ -21,7 +20,6 @@ import java.net.UnknownHostException;
 import java.net.Socket;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
@@ -43,12 +41,7 @@ public class Client {
         try {
             System.out.println("Connecting to server at : " + this.connectLocation);
             this.resourceManager = (ResourceManagerInterface) Naming.lookup(connectLocation);
-        } catch (Exception e) {
-            System.out.println("AdditionClient failed: ");
-            e.printStackTrace();
-        }
 
-        try {
             this.resources = this.getResources(dir);
             this.resourceManager.add(this.resources);
         } catch (RemoteException e) {
@@ -56,6 +49,8 @@ public class Client {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -66,44 +61,32 @@ public class Client {
             while(true) {
                 //Get and select a resource
                 ArrayList<String> resources = this.requestResources();
+                System.out.println("> Resources available: "+resources.size());
                 if(resources.size() > 0) {
                     String randomResource = this.selectRandomResource(resources);
-                    Resource resourceLocation = this.requestResourceLocation(randomResource);
-                    System.out.println("> resourceLocation" + resourceLocation.getIp() + ", " + resourceLocation.getName());
+                    Resource resource = this.requestResourceLocation(randomResource);
+                    System.out.println("> Resource " + resource.getIp() + ", " + resource.getName());
                 
                     //Open connection
-                    String ip = resourceLocation.getIp();
-                    if(ip.equals("127.0.1.1")){
-                        ip = "172.16.14.62";
-                    }
-                    InetAddress addr = InetAddress.getByName(ip);
-                    System.out.println("> Connecting to " + addr.getHostAddress());
-                    Socket socket = new Socket(addr, 3322);
+                    String ip = resource.getIp();
+                    System.out.println("> Connecting to peer: " + ip);
+                    Socket socket = this.connectToPeer(ip);
 
                     //Send resource name
-                    System.out.println("> Sending name: "+ resourceLocation.getName());
-
-                    OutputStream os = socket.getOutputStream();
-                    OutputStreamWriter osw = new OutputStreamWriter(os);
-                    BufferedWriter bw = new BufferedWriter(osw);
-        
-                    String str = resourceLocation.getName() + "\n";
-                    bw.write(str);
-                    bw.flush();
+                    System.out.println("> Sending name: "+ resource.getName());
+                    this.sendFilenameToPeer(socket, resource.getName());
 
                     //Receive resource
-                    InputStream input = socket.getInputStream();
-                    InputStreamReader isr = new InputStreamReader(input);
-                    BufferedReader br = new BufferedReader(isr);
-                    String content = br.readLine();
+                    System.out.println("> Receiving content ");
+                    String content = this.receiveContent(socket);
 
                     //Write file
                     System.out.println("> File received");
-                    this.writeFile(resourceLocation.getName(), content);
+                    this.writeFile(resource.getName(), content);
 
-                    input.close();
                     socket.close();
                 }
+                System.out.println(" ----------------- ");
                 TimeUnit.SECONDS.sleep(5);
             }
 
@@ -162,9 +145,54 @@ public class Client {
 
     public void writeFile(String name, String content) {
         try {
-            Files.write(Paths.get(this.dir + "/" + name), content.getBytes());
+            Files.write(Paths.get("./downloads/" + name), content.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Socket connectToPeer(String ip) {
+        try {
+            if(ip.equals("127.0.1.1")){
+                ip = "172.16.14.62";
+            }
+
+            InetAddress addr = InetAddress.getByName(ip);            
+            return new Socket(addr, 3322);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }        
+    }
+
+    public void sendFilenameToPeer(Socket socket, String filename) {
+        try {
+            OutputStream os;
+            os = socket.getOutputStream();
+        
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            BufferedWriter bw = new BufferedWriter(osw);
+
+            String str = filename + "\n";
+            bw.write(str);
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String receiveContent(Socket socket) {
+        try{
+            InputStream input = socket.getInputStream();
+            InputStreamReader isr = new InputStreamReader(input);
+            BufferedReader br = new BufferedReader(isr);
+            String content = br.readLine();
+            input.close();
+            return content;
+        }catch(IOException e){
+            e.printStackTrace();
+            return null;
         }
     }
 
