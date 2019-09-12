@@ -27,6 +27,9 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
 
     public ArrayList<String> getResources(String excludeIp) {        
         this.requests.put(excludeIp, new Date().getTime());
+        
+        if(this.requests.size() > 0)
+            this.checkRequests(excludeIp);
 
         ArrayList<String> resources = new ArrayList<String>();
         for (String key : this.resources.keySet()) {
@@ -35,9 +38,6 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
             }
         }
 
-        if(this.requests.size() > 0)
-            this.checkRequests(excludeIp);
-        
         return resources;
     }
 
@@ -56,7 +56,7 @@ public class ResourceManager extends UnicastRemoteObject implements ResourceMana
     public void printResources() {
         System.out.println("> resources list:");
 		for (Map.Entry<String, Resource> entry : this.resources.entrySet()) {
-		    System.out.println(entry.getValue().getIp() + ", " + entry.getValue().getName() );
+		    System.out.println("-" + entry.getValue().getIp() + " | " + entry.getValue().getName() );
         }
     }
 

@@ -102,7 +102,7 @@ public class Client {
                     input.close();
                     socket.close();
                 }
-                TimeUnit.SECONDS.sleep(15);
+                TimeUnit.SECONDS.sleep(5);
             }
 
         } catch (Exception e) {
