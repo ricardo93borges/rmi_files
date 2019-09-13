@@ -8,9 +8,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.stream.Collectors;
 
 public class RequestHandler implements Runnable {
 
@@ -38,7 +38,12 @@ public class RequestHandler implements Runnable {
             //Get resource content
             Path path = Paths.get(this.dir + "/" + resourceName);
             Charset charset = Charset.forName("ISO-8859-1");
-            String content = Files.readAllLines(path, charset).stream().collect(Collectors.joining(""));
+            List<String> lines = Files.readAllLines(path, charset);
+
+            String content = "";
+            for(String line: lines){
+                content = content+line;
+            }
 
             OutputStream os = this.client.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);

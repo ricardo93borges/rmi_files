@@ -12,9 +12,9 @@ import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.Socket;
@@ -107,7 +107,13 @@ public class Client {
             if (file.isFile()) {
                 Path path = Paths.get(dir + "/" + file.getName());
                 Charset charset = Charset.forName("ISO-8859-1");
-                String content = Files.readAllLines(path, charset).stream().collect(Collectors.joining(""));
+                List<String> lines = Files.readAllLines(path, charset);
+
+                String content = "";
+                for(String line: lines){
+                    content = content+line;
+                }
+
                 String hash = new String(this.hash(content), "UTF-8");
                 resources.add(new Resource(hash, this.ip, file.getName()));
             }
